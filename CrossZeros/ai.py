@@ -3,14 +3,17 @@ from CrossZeros.definition import *
 
 
 class AI:
-    def __init__(self, field, players_cell_type):
+    def __init__(self, field, players_cell_type, blunt=False):
         self.field = field
         self.cell_type = players_cell_type
         self.opponent_cell_type = Cell.ZERO if players_cell_type == Cell.CROSS else Cell.CROSS
+        self.blunt = blunt
         self.possibles_move = []
 
-    @staticmethod
-    def template_reconciliation(s):
+    def template_reconciliation(self, s):
+        if self.blunt:
+            return 1
+
         weight = 0
 
         for k in TEMPLATE:

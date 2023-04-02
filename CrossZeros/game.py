@@ -116,7 +116,7 @@ class GameRoundManager:
                                     (i + deviation, j - deviation)
                                    ]):
 
-                if 0 <= min(ij) and max(ij) < FIELD_SIZE - 1:
+                if 0 <= min(ij) and max(ij) < FIELD_SIZE:
                     line[n].append(ij)
 
         for n in range(4):
