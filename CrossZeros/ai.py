@@ -37,7 +37,7 @@ class AI:
                 if cur_x == i and cur_y == j:
                     s[n] += 'x'
                 else:
-                    if 0 <= min(cur_x, cur_y) and max(cur_x, cur_y) < FIELD_SIZE - 1:
+                    if 0 <= min(cur_x, cur_y) and max(cur_x, cur_y) < FIELD_SIZE:
 
                         if self.field[cur_x][cur_y] == Cell.VOID:
                             s[n] += '0'
@@ -71,7 +71,7 @@ class AI:
                     for cur_x in range(x - 2, x + 3):
                         for cur_y in range(y - 2, y + 3):
 
-                            if 0 <= min(cur_x, cur_y) and max(cur_x, cur_y) < FIELD_SIZE - 1:
+                            if 0 <= min(cur_x, cur_y) and max(cur_x, cur_y) < FIELD_SIZE:
                                 if self.field[cur_x][cur_y] == Cell.VOID:
                                     self.possibles_move.append((cur_x, cur_y))
 
