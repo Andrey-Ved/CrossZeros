@@ -3,6 +3,7 @@ import pygame
 from ai import AI
 from CrossZeros.definition import *
 
+
 class Player:
     def __init__(self, name, cell_type):
         self.name = name
