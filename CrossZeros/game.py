@@ -50,7 +50,7 @@ class GameFieldView:
                 (2 + x, 2, self.width // 2 - 4, BUTTON_ZONE_SIZE - 4)
             )
 
-        button_text = {0: TEXTS['new game with zeros'], 1: TEXTS['new game with cross']}
+        button_text = {0: TEXTS['new game with cross'], 1: TEXTS['new game with zeros']}
 
         for b in 0, 1:
 

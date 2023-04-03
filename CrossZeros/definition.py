@@ -13,8 +13,8 @@ CELL_SIZE = 40
 BUTTON_ZONE_SIZE = 60
 
 TEXTS = {
-    'new game with zeros': 'Начать игру, крестиками',
-    'new game with cross': 'Начать игру, ноликами',
+    'new game with cross': 'Начать игру, крестиками',
+    'new game with zeros': 'Начать игру, ноликами',
     'congratulation': 'победил ',
     'human player name': 'Человек',
     'ai player name': 'ИИ'
