@@ -1,4 +1,4 @@
-from game import GameWindow
+from CrossZeros.game import GameWindow
 
 
 def main():

@@ -1,6 +1,6 @@
 import time
 import pygame
-from ai import AI
+from CrossZeros.ai import AI
 from CrossZeros.definition import *
 
 
