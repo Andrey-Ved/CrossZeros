@@ -1,110 +1,16 @@
-import time
 import pygame
 from CrossZeros.ai import AI
+from CrossZeros.UI.field_widget import GameFieldView
 from CrossZeros.definition import *
 
 
-class Player:
-    def __init__(self, name, cell_type):
-        self.name = name
-        self.cell_type = cell_type
-
-
-class GameField:
-    def __init__(self):
-        self.height = FIELD_SIZE
-        self.width = FIELD_SIZE
-        self.cells = [[Cell.VOID] * self.width for _ in range(self.height)]
-
-
-class GameFieldView:
-    def __init__(self, field):
-        pygame.init()
-        pygame.font.SysFont('arial', 32)
-        self.font = pygame.font.Font(None, 32)
-
-        self.field = field
-        self.width = FIELD_SIZE * CELL_SIZE
-        self.height = self.width + BUTTON_ZONE_SIZE
-        self.title = 'Crosses & Zeroes'
-
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption(self.title)
-        self.display_the_initial_field()
-
-    def display_the_initial_field(self):
-        for x in range(0, self.width, CELL_SIZE):
-            for y in range(0, self.width, CELL_SIZE):
-
-                pygame.draw.rect(
-                    self.screen,
-                    (125, 125, 125),
-                    (x + 2, BUTTON_ZONE_SIZE + y + 2, CELL_SIZE - 4, CELL_SIZE - 4)
-                )
-
-        for x in 0, self.width // 2:
-
-            pygame.draw.rect(
-                self.screen,
-                (255, 255, 255),
-                (2 + x, 2, self.width // 2 - 4, BUTTON_ZONE_SIZE - 4)
-            )
-
-        button_text = {0: TEXTS['new game with cross'], 1: TEXTS['new game with zeros']}
-
-        for b in 0, 1:
-
-            self.screen.blit(
-                self.font.render(button_text[b], True, (125, 125, 125)),
-                (b * (self.width // 2 + 10) + 15, BUTTON_ZONE_SIZE // 2 - 10)
-            )
-
-    def draw_cell(self, i, j):
-        if self.field.cells[i][j] == Cell.CROSS:
-            text = 'X'
-        elif self.field.cells[i][j] == Cell.ZERO:
-            text = 'O'
-        else:
-            text = ''
-
-        font = pygame.font.Font(None, 38)
-        text = font.render(text, True, (255, 255, 255))
-
-        self.screen.blit(
-            text,
-            (i * CELL_SIZE + 11, j * CELL_SIZE + 8 + BUTTON_ZONE_SIZE)
-        )
-
-    def draw_congratulation(self, player):
-        congratulation_text = f'{TEXTS["congratulation"]} {player.name}'
-
-        self.screen.blit(
-            self.font.render(congratulation_text, True, (200, 200, 255)),
-            (self.width // 2 - 95, BUTTON_ZONE_SIZE + self.width // 2 + 10)
-        )
-
-        pygame.display.flip()
-        time.sleep(2)
-
-    def check_coords_correct(self, x, y):
-        if BUTTON_ZONE_SIZE <= y <= self.height and 0 <= x <= self.width:
-            return True
-        return False
-
-    @staticmethod
-    def get_coords(x, y):
-        i = x // CELL_SIZE
-        j = (y - BUTTON_ZONE_SIZE) // CELL_SIZE
-        return i, j
-
-
 class GameRoundManager:
-    def __init__(self, player1: Player, player2: Player):
+    def __init__(self, player1, player2, field_size):
         self.players = [player1, player2]
         self.current_player = 1 if player1.cell_type == Cell.CROSS else 0
-        self.field = GameField()
+        self.field = GameField(field_size)
         self.field_widget = GameFieldView(self.field)
-        self.ai_player = AI(self.field.cells, player2.cell_type)
+        self.ai_player = AI(self.field, player2.cell_type)
 
     def checking_ending(self, i, j):
         line = [[] for _ in range(4)]
@@ -117,7 +23,7 @@ class GameRoundManager:
                                     (i + deviation, j - deviation)
                                    ]):
 
-                if 0 <= min(ij) and max(ij) < FIELD_SIZE:
+                if 0 <= min(ij) and max(ij) < self.field.size:
                     line[n].append(ij)
 
         for n in range(4):
@@ -170,20 +76,24 @@ class GameRoundManager:
 
 
 class GameWindow:
-    def __init__(self):
-        player1 = Player(TEXTS['human player name'], Cell.CROSS)
-        player2 = Player(TEXTS['ai player name'], Cell.ZERO)
-        self.game_manager = GameRoundManager(player1, player2)
+    def __init__(self, field_size=FIELD_SIZE, fps=FPS):
+        self.field_size = field_size
+        self.fps = fps
+        self.restart_game(True)
 
-    def restart_game(self, x):
-        if x < FIELD_SIZE * CELL_SIZE // 2:
-            player1 = Player(TEXTS['human player name'], Cell.CROSS)
-            player2 = Player(TEXTS['ai player name'], Cell.ZERO)
-            self.game_manager = GameRoundManager(player1, player2)
+    def restart_game(self, pressed_button_is_one):
+        if pressed_button_is_one:
+            self.game_manager = GameRoundManager(
+                Player(HUMAN_PLAYER_NAME, Cell.CROSS),
+                Player(AI_PLAYER_NAME, Cell.ZERO),
+                self.field_size
+            )
         else:
-            player1 = Player(TEXTS['human player name'], Cell.ZERO)
-            player2 = Player(TEXTS['ai player name'], Cell.CROSS)
-            self.game_manager = GameRoundManager(player1, player2)
+            self.game_manager = GameRoundManager(
+                Player(HUMAN_PLAYER_NAME, Cell.ZERO),
+                Player(AI_PLAYER_NAME, Cell.CROSS),
+                self.field_size
+            )
             self.game_manager.ai_move()
 
     def main_loop(self):
@@ -203,7 +113,9 @@ class GameWindow:
                             end = self.game_manager.handle_click(x, y)
                     else:
                         end = False
-                        self.restart_game(x)
+                        self.restart_game(
+                            self.game_manager.field_widget.pressed_button_is_one(x)
+                        )
 
             pygame.display.flip()
-            clock.tick(FPS)
+            clock.tick(self.fps)

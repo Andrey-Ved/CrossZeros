@@ -7,18 +7,24 @@ class Cell(Enum):
     ZERO = 2
 
 
-FPS = 60
-FIELD_SIZE = 15
-CELL_SIZE = 40
-BUTTON_ZONE_SIZE = 60
+class Player:
+    def __init__(self, name, cell_type):
+        self.name = name
+        self.cell_type = cell_type
 
-TEXTS = {
-    'new game with cross': 'Начать игру, крестиками',
-    'new game with zeros': 'Начать игру, ноликами',
-    'congratulation': 'победил ',
-    'human player name': 'Человек',
-    'ai player name': 'ИИ'
-}
+
+HUMAN_PLAYER_NAME = 'Человек'
+AI_PLAYER_NAME = 'ИИ'
+
+FIELD_SIZE = 15
+
+class GameField:
+    def __init__(self, field_param):
+        self.size = FIELD_SIZE
+        self.cells = [[Cell.VOID] * self.size for _ in range(self.size)]
+
+
+FPS = 60
 
 TEMPLATE = {
     'xxxxx': 10000,
