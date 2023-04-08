@@ -18,8 +18,9 @@ AI_PLAYER_NAME = 'ИИ'
 
 FIELD_SIZE = 15
 
+
 class GameField:
-    def __init__(self, field_param):
+    def __init__(self):
         self.size = FIELD_SIZE
         self.cells = [[Cell.VOID] * self.size for _ in range(self.size)]
 
