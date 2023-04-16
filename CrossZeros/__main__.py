@@ -1,5 +1,4 @@
 from CrossZeros.game import GameWindow
-from pathlib import Path
 
 
 def main():
