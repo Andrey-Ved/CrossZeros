@@ -5,10 +5,10 @@ from CrossZeros.definition import *
 
 
 class GameRoundManager:
-    def __init__(self, player1, player2, field_size):
+    def __init__(self, player1, player2):
         self.players = [player1, player2]
         self.current_player = 1 if player1.cell_type == Cell.CROSS else 0
-        self.field = GameField(field_size)
+        self.field = GameField()
         self.field_widget = GameFieldView(self.field)
         self.ai_player = AI(self.field, player2.cell_type)
 
@@ -85,14 +85,12 @@ class GameWindow:
         if pressed_button_is_one:
             self.game_manager = GameRoundManager(
                 Player(HUMAN_PLAYER_NAME, Cell.CROSS),
-                Player(AI_PLAYER_NAME, Cell.ZERO),
-                self.field_size
+                Player(AI_PLAYER_NAME, Cell.ZERO)
             )
         else:
             self.game_manager = GameRoundManager(
                 Player(HUMAN_PLAYER_NAME, Cell.ZERO),
-                Player(AI_PLAYER_NAME, Cell.CROSS),
-                self.field_size
+                Player(AI_PLAYER_NAME, Cell.CROSS)
             )
             self.game_manager.ai_move()
 
