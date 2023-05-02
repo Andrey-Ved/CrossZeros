@@ -1,5 +1,6 @@
 import random
-from CrossZeros.definition import *
+
+from CrossZeros.definition import Cell, TEMPLATE
 
 
 class AI:
@@ -17,7 +18,7 @@ class AI:
 
         self.possibles_move = []
 
-    def template_reconciliation(self, s):
+    def _template_reconciliation(self, s):
         if self.blunt:
             return 1
 
@@ -29,7 +30,7 @@ class AI:
 
         return weight
 
-    def variant_evaluation(self, i, j, cell_type):
+    def _variant_evaluation(self, i, j, cell_type):
         s = ['' for _ in range(4)]
 
         for deviation in range(-4, 5):
@@ -53,14 +54,14 @@ class AI:
                         else:
                             s[n] += '1'
 
-        return sum(map(self.template_reconciliation, s))
+        return sum(map(self._template_reconciliation, s))
 
-    def variant_choosing(self, cell_type):
+    def _variant_choosing(self, cell_type):
         max_weight = 0
         i, j = random.choice(self.possibles_move)
 
         for cur_x, cur_y in self.possibles_move:
-            current_weight = self.variant_evaluation(cur_x, cur_y, cell_type)
+            current_weight = self._variant_evaluation(cur_x, cur_y, cell_type)
 
             if max_weight < current_weight:
                 max_weight = current_weight
@@ -86,8 +87,8 @@ class AI:
             i = self.field.size // 2
             j = self.field.size // 2
         else:
-            attack = self.variant_choosing(self.cell_type)
-            defense = self.variant_choosing(self.opponent_cell_type)
+            attack = self._variant_choosing(self.cell_type)
+            defense = self._variant_choosing(self.opponent_cell_type)
             if attack[0] >= defense[0]:
                 i, j = attack[1]
             else:

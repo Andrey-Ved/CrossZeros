@@ -1,6 +1,8 @@
 import pygame
+
 from CrossZeros.ai import AI
 from CrossZeros.UI.field_widget import GameFieldView
+
 from CrossZeros.definition import *
 
 
@@ -8,9 +10,11 @@ class GameRoundManager:
     def __init__(self, player1, player2):
         self.players = [player1, player2]
         self.current_player = 1 if player1.cell_type == Cell.CROSS else 0
+
         self.field = GameField()
-        self.field_widget = GameFieldView(self.field)
-        self.ai_player = AI(self.field, player2.cell_type)
+
+        self._widget = GameFieldView(self.field, TEXTS)
+        self._ai_player = AI(self.field, player2.cell_type)
 
     def checking_ending(self, i, j):
         line = [[] for _ in range(4)]
@@ -38,7 +42,7 @@ class GameRoundManager:
                     count = 0
 
                 if count > 4:
-                    self.field_widget.draw_congratulation(self.players[self.current_player])
+                    self._widget.draw_congratulation(self.players[self.current_player])
                     return True
 
         return False
@@ -50,16 +54,16 @@ class GameRoundManager:
 
     def players_move(self, i, j):
         self.field.cells[i][j] = self.players[self.current_player].cell_type
-        self.field_widget.draw_cell(i, j)
+        self._widget.draw_cell(i, j)
 
     def ai_move(self):
         self.current_player = 1 - self.current_player
-        i, j = self.ai_player.choosing_move()
+        i, j = self._ai_player.choosing_move()
         self.players_move(i, j)
         return i, j
 
     def handle_click(self, x, y):
-        i, j = self.field_widget.get_coords(x, y)
+        i, j = self._widget.get_coords(x, y)
 
         if not self.checking_if_cell_is_empty(i, j):
             return False
@@ -74,8 +78,14 @@ class GameRoundManager:
 
         return self.checking_ending(i, j)
 
+    def check_coords_correct(self, x, y):
+        return self._widget.check_coords_correct(x, y)
 
-class GameWindow:
+    def pressed_button_is_one(self, x):
+        return self._widget.pressed_button_is_one(x)
+
+
+class Game:
     def __init__(self, field_size=FIELD_SIZE, fps=FPS):
         self.field_size = field_size
         self.fps = fps
@@ -106,13 +116,13 @@ class GameWindow:
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     x, y = pygame.mouse.get_pos()
 
-                    if self.game_manager.field_widget.check_coords_correct(x, y):
+                    if self.game_manager.check_coords_correct(x, y):
                         if not end:
                             end = self.game_manager.handle_click(x, y)
                     else:
                         end = False
                         self.restart_game(
-                            self.game_manager.field_widget.pressed_button_is_one(x)
+                            self.game_manager.pressed_button_is_one(x)
                         )
 
             pygame.display.flip()

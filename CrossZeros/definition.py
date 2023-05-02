@@ -13,19 +13,25 @@ class Player:
         self.cell_type = cell_type
 
 
-HUMAN_PLAYER_NAME = 'Человек'
-AI_PLAYER_NAME = 'ИИ'
-
-FIELD_SIZE = 15
-
-
 class GameField:
     def __init__(self):
         self.size = FIELD_SIZE
         self.cells = [[Cell.VOID] * self.size for _ in range(self.size)]
 
 
+FIELD_SIZE = 15
+
+HUMAN_PLAYER_NAME = 'Человек'
+AI_PLAYER_NAME = 'ИИ'
+
 FPS = 60
+
+TEXTS = {
+    'new game with cross': 'Начать игру, крестиками',
+    'new game with zeros': 'Начать игру, ноликами',
+    'congratulation': 'победил ',
+    'title':  'Crosses & Zeroes',
+}
 
 TEMPLATE = {
     'xxxxx': 10000,

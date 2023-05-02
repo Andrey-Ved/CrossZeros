@@ -1,9 +1,9 @@
-from CrossZeros.game import GameWindow
+from CrossZeros.game import Game
 
 
 def main():
-    window = GameWindow()
-    window.main_loop()
+    g = Game()
+    g.main_loop()
     print('Game over!')
 
 

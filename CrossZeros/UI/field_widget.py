@@ -5,18 +5,20 @@ from CrossZeros.definition import Cell
 
 
 class GameFieldView:
-    def __init__(self, field):
+    def __init__(self, field, texts):
+        self.field = field
+        self.texts = texts
+
         pygame.init()
         pygame.font.SysFont(FONT_NAME, TEXTS_FONT_SIZE)
+
         self.font = pygame.font.Font(None, TEXTS_FONT_SIZE)
-        self.field = field
-        self.title = 'Crosses & Zeroes'
-
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption(self.title)
-        self.display_the_initial_field()
+        pygame.display.set_caption(self.texts['title'])
 
-    def display_the_initial_field(self):
+        self.display_new_field()
+
+    def display_new_field(self):
         for x in range(0, WIDTH, CELL_SIZE):
             for y in range(0, WIDTH, CELL_SIZE):
 
@@ -43,14 +45,15 @@ class GameFieldView:
                  )
             )
 
-        button_text = [TEXTS['new game with cross'], TEXTS['new game with zeros']]
+        button_text = [self.texts['new game with cross'], self.texts['new game with zeros']]
 
-        for button in 0, 1:
-            self.screen.blit(
-                self.font.render(button_text[button], True, COLOR_OF_BUTTONS_LABELS),
-                (
-                  button * (WIDTH // 2 + DEFLECTION_BUTTON) + ALIGNMENT_BUTTON_BY_X,
-                  BUTTON_ZONE_SIZE // 2 + ALIGNMENT_BUTTON_BY_Y
+        for n in 0, 1:
+            self.text_out(
+                text=button_text[n],
+                color=COLOR_OF_BUTTONS_LABELS,
+                coordinates=(
+                    n * WIDTH // 2 + WIDTH // 4,
+                    BUTTON_ZONE_SIZE // 2
                 )
             )
 
@@ -62,29 +65,38 @@ class GameFieldView:
         else:
             text = ''
 
-        font = pygame.font.Font(None, FIGURE_FONT_SIZE)
-        text = font.render(text, True, FIGURE_COLOR)
-
-        self.screen.blit(
-            text,
-            (
-             i * CELL_SIZE + ALIGNMENT_FIGURE_BY_X,
-             j * CELL_SIZE + ALIGNMENT_FIGURE_BY_Y + BUTTON_ZONE_SIZE
+        self.text_out(
+            text=text,
+            color=FIGURE_COLOR,
+            coordinates=(
+                i * CELL_SIZE + CELL_SIZE // 2,
+                j * CELL_SIZE + CELL_SIZE // 2 + BUTTON_ZONE_SIZE
             )
         )
 
     def draw_congratulation(self, player):
-        congratulation_text = f'{TEXTS["congratulation"]} {player.name}'
-
-        self.screen.blit(
-            self.font.render(congratulation_text, True, CONGRATULATION_COLOR),
-            CONGRATULATION_COORDINATES
+        self.text_out(
+            text=f'{self.texts["congratulation"]} {player.name}',
+            color=CONGRATULATION_COLOR,
+            coordinates=(
+                WIDTH // 2,
+                BUTTON_ZONE_SIZE + WIDTH // 2
+            )
         )
 
         pygame.display.flip()
         sleep(DURATION_CONGRATULATION)
 
-    def check_coords_correct(self, x, y):
+    def text_out(self, text, color, coordinates):
+        text = self.font.render(text, True, color)
+
+        text_rect = text.get_rect()
+        text_rect.center = coordinates
+
+        self.screen.blit(text, text_rect)
+
+    @staticmethod
+    def check_coords_correct(x, y):
         if BUTTON_ZONE_SIZE <= y <= HEIGHT and 0 <= x <= WIDTH:
             return True
         return False
@@ -92,7 +104,8 @@ class GameFieldView:
     def pressed_button_is_one(self, x):
         return x < self.field.size * CELL_SIZE // 2
 
-    def get_coords(self, x, y):
+    @staticmethod
+    def get_coords(x, y):
         i = x // CELL_SIZE
         j = (y - BUTTON_ZONE_SIZE) // CELL_SIZE
         return i, j
